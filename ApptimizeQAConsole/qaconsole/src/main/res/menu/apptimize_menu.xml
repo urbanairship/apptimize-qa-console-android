@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/search"
+        android:title="@string/apptimize_search_title"
+        android:icon="@drawable/ic_search_foreground"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView" />
+
+    <item
+        android:id="@+id/action_custom_button"
+        android:background="@drawable/apptimize_button_bg"
+        android:showAsAction="ifRoom"
+        android:title="@string/apptimize_reset"
+        />
+
+</menu>

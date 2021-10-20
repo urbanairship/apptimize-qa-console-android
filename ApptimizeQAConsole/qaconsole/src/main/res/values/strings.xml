@@ -1,0 +1,10 @@
+<resources>
+    <string name="apptimize_app_name">QAConsole</string>
+    <string name="apptimize_reset">Reset All</string>
+    <string name="apptimize_expID">experimentId</string>
+    <string name="apptimize_expName">experimentName</string>
+    <string name="apptimize_varID">variantId</string>
+    <string name="apptimize_varName">variantName</string>
+    <string name="apptimize_search_title">Search</string>
+    <string name="apptimize_search_hint">Experiment Name</string>
+</resources>
