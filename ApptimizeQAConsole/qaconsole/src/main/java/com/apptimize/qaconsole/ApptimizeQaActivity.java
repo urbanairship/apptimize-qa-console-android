@@ -29,9 +29,7 @@ import java.util.Set;
 import static com.apptimize.qaconsole.R.id;
 import static com.apptimize.qaconsole.R.layout;
 
-
 public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryTextListener {
-
     private List<Experiment> dataModels;
     private ListView listView;
     private CustomAdapter adapter;
@@ -43,8 +41,11 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(layout.apptimize_activity_qa);
+        
         listView = findViewById(id.listView);
+        
         progressIndicator = findViewById(id.pbHeaderProgress);
         progressIndicator
                 .getIndeterminateDrawable()
@@ -54,6 +55,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
             Toolbar toolbar = findViewById(id.toolbar);
             toolbar.setVisibility(View.VISIBLE);
             setActionBar(toolbar);
+
             // inflate the toolbar manually
             toolbar.inflateMenu(R.menu.apptimize_menu);
         }
@@ -64,6 +66,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
     @Override
     protected void onResume() {
         super.onResume();
+        
         makeAdapter();
         startMetadataStatusMonitoring();
     }
@@ -73,6 +76,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
         if (metadataStateChangedListener != null) {
             Apptimize.removeMetadataStateChangedListener(metadataStateChangedListener);
         }
+
         super.onPause();
     }
 
@@ -82,12 +86,14 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
             System.out.println ( "Clearing all forced variants!" );
             Apptimize.clearAllForcedVariants();
         }
+
         return true;
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         QAConsole.qaActivityLaunched = false;
     }
 
@@ -99,6 +105,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
     @Override
     public boolean onQueryTextChange(String newText) {
         adapter.getFilter().filter(newText);
+        
         return true;
     }
 
@@ -129,10 +136,12 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
 
     private void resetSearch() {
         adapter.reset();
+        
         if (searchView == null) {
             Log.e(getClass().getSimpleName(), "SearchView is null");
             return;
         }
+
         searchView.setQuery ("",false );
         searchView.clearFocus();
     }
@@ -157,6 +166,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
             } else {
                 experiment = experiments.get(index);
             }
+
             experiment.addVariant(new Variant(source));
         }
 
@@ -183,21 +193,19 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
         searchView.requestFocusFromTouch();
 
         menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                searchView.requestFocus ();
+                searchView.requestFocus();
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
 
-                resetSearch ();
+                resetSearch();
                 return true;
             }
         });
-
 
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener () {
             @Override
@@ -230,7 +238,6 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
 
             @Override
             public void onApptimizeForegrounded(boolean willRefreshMetadata) {
-
             }
         };
     }

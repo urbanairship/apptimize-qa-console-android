@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Variant {
-
     public final String name;
     public final Long id;
     private boolean checked;
@@ -25,8 +24,12 @@ public class Variant {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Variant)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof Variant)) {
+            return false;
+        }
+
         Variant variant = (Variant) o;
         return id.equals(variant.id);
     }

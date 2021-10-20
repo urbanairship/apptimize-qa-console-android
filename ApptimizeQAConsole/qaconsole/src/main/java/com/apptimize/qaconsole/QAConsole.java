@@ -12,7 +12,6 @@ import com.apptimize.Apptimize;
 import com.apptimize.ApptimizeTestInfo;
 
 public class QAConsole implements SensorEventListener {
-
     public boolean isShakeGestureEnabled;
     private Context appContext;
 
@@ -24,7 +23,6 @@ public class QAConsole implements SensorEventListener {
     private int mShakeCount;
     private SensorManager mSensorManager;
     public static boolean qaActivityLaunched;
-
 
     public QAConsole(Context aContext) {
 
@@ -38,29 +36,20 @@ public class QAConsole implements SensorEventListener {
     }
 
     public void launchQAConsole() {
-
         if (!isShakeGestureEnabled && !qaActivityLaunched) {
-
-            //launch!
             launchApptimizeQAActivity();
         }
     }
 
     private void launchApptimizeQAActivity() {
-
         Intent intent = new Intent(appContext, ApptimizeQaActivity.class);
         appContext.startActivity(intent);
         qaActivityLaunched = true;
         Apptimize.track("QA Console Opened");
-
-
     }
 
     private void onShake() {
-
         if(isShakeGestureEnabled && !qaActivityLaunched) {
-
-            //launch!
             Log.i("QAConsole","Shake detected, launching console");
             launchApptimizeQAActivity();
         }
@@ -73,7 +62,6 @@ public class QAConsole implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
@@ -103,5 +91,4 @@ public class QAConsole implements SensorEventListener {
                onShake();
         }
     }
-
 }

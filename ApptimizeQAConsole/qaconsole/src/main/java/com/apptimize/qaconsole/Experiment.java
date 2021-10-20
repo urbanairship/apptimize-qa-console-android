@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Experiment implements Comparable<Experiment> {
-
     public final String name;
     public final Long id;
     private List<Variant> variants;
@@ -43,6 +42,7 @@ public class Experiment implements Comparable<Experiment> {
         for (Variant variant : variants) {
             result.add(new ListViewModel(variant));
         }
+
         return result;
     }
 
@@ -52,6 +52,7 @@ public class Experiment implements Comparable<Experiment> {
                 return v.id;
             }
         }
+
         return null;
     }
 
@@ -73,13 +74,18 @@ public class Experiment implements Comparable<Experiment> {
                 break;
             }
         }
+
         return result;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Experiment)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof Experiment)) {
+            return false;
+        }
+
         Experiment that = (Experiment) o;
         return id.equals(that.id);
     }
@@ -108,6 +114,7 @@ public class Experiment implements Comparable<Experiment> {
             } else if (o2.name.equals(originalName)) {
                 return  1;
             }
+
             return o1.name.compareTo(o2.name);
         }
     }

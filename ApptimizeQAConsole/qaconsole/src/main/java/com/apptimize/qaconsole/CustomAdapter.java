@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filterable {
-
     private List<Experiment> experiments;
     private List<ListViewModel> dataSetFiltered;
     private CustomFilter customFilter;
@@ -106,7 +105,6 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
@@ -115,8 +113,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
             viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
             viewHolder.isHeader = false;
             convertView.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
@@ -137,6 +134,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
             viewHolder.txtName.setTextSize(17);
             viewHolder.txtName.setTypeface(null, Typeface.NORMAL);
         }
+
         return convertView;
     }
 
@@ -145,15 +143,16 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
         if(customFilter == null) {
             customFilter = new CustomFilter();
         }
+
         return customFilter;
     }
 
     private class CustomFilter extends Filter {
-
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults filterResults = new FilterResults();
             List<ListViewModel> filtered = new ArrayList<>();
+
             for (Experiment ex : experiments) {
                 filtered.addAll(ex.generateListViewItems(constraint));
             }
