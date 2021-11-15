@@ -18,10 +18,6 @@ public class ListViewModel {
         this.name = variant.name;
     }
 
-    public void toggleSelection() {
-        this.isChecked = !this.isChecked;
-    }
-
     public boolean isChecked() {
         return isChecked;
     }

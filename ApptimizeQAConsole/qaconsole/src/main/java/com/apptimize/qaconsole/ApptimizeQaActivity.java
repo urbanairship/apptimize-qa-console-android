@@ -11,15 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.Toolbar;
 
 import com.apptimize.Apptimize;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -30,13 +32,14 @@ import static com.apptimize.qaconsole.R.id;
 import static com.apptimize.qaconsole.R.layout;
 
 public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryTextListener {
-    private List<Experiment> dataModels;
+    private ExperimentsDataSource dataSource;
     private ListView listView;
     private CustomAdapter adapter;
     private ProgressBar progressIndicator;
     private MenuItem menuSearch;
     private SearchView searchView;
     private Apptimize.MetadataStateChangedListener metadataStateChangedListener;
+    private DisplayMode displayMode = DisplayMode.EXPERIMENTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
         setContentView(layout.apptimize_activity_qa);
         
         listView = findViewById(id.listView);
+
+        configureDisplayModeSpinner();
         
         progressIndicator = findViewById(id.pbHeaderProgress);
         progressIndicator
@@ -109,6 +114,32 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
         return true;
     }
 
+    private void configureDisplayModeSpinner() {
+
+        String[] items = new String[DisplayMode.values().length];
+        for (int index = 0; index < DisplayMode.values().length; index++) {
+            items[index] = DisplayMode.values()[index].toString();
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner displayModeSpinner = findViewById(id.display_mode_spinner);
+        displayModeSpinner.setAdapter(adapter);
+
+        displayModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ApptimizeQaActivity.this.adapter.setDisplayMode(DisplayMode.values()[position]);
+                resetSearch();
+                menuSearch.collapseActionView();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
     private void startMetadataStatusMonitoring() {
         metadataStateChangedListener = createMetadataStateListener();
         Apptimize.addMetadataStateChangedListener(metadataStateChangedListener);
@@ -128,8 +159,9 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
     }
 
     private void makeAdapter() {
-        populateDataModel();
-        adapter = new CustomAdapter(this, dataModels);
+        this.dataSource = new ExperimentsDataSource(Apptimize.getVariants(),
+                Apptimize.getInstantUpdateOrWinnerInfo().values());
+        adapter = new CustomAdapter(this, dataSource, displayMode);
         listView.setAdapter(adapter);
         adapter.setTestInfo(Apptimize.getTestInfo());
     }
@@ -151,27 +183,6 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
         for (Long id : selectedVariants) {
             Apptimize.forceVariant(id);
         }
-    }
-
-    private void populateDataModel() {
-        Map<Long, Map<String, Object>> myVariants = Apptimize.getVariants();   // note getVariants can return empty or null.
-
-        List<Experiment> experiments = new ArrayList<>();
-
-        for (Map<String, Object> source : myVariants.values()){
-            Experiment experiment = new Experiment(source);
-            int index = experiments.indexOf(experiment);
-            if (index < 0) {
-                experiments.add(experiment);
-            } else {
-                experiment = experiments.get(index);
-            }
-
-            experiment.addVariant(new Variant(source));
-        }
-
-        Collections.sort(experiments);
-        dataModels = experiments;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
