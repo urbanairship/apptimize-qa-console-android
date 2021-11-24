@@ -32,6 +32,7 @@ import static com.apptimize.qaconsole.R.id;
 import static com.apptimize.qaconsole.R.layout;
 
 public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryTextListener {
+    public static final String BUNDLE_KEY_KNOWN_WINNERES = "KNOWN_WINNERS";
     private ExperimentsDataSource dataSource;
     private ListView listView;
     private CustomAdapter adapter;
@@ -156,14 +157,18 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
                 setSelectedVariants(adapter.getAllCheckedVariants());
             }
         });
+
+        listView.addFooterView(new VersionFooterView(this));
     }
 
     private void makeAdapter() {
+        ArrayList<Long> winners = (ArrayList<Long>) getIntent().getExtras().get(BUNDLE_KEY_KNOWN_WINNERES);
+
         this.dataSource = new ExperimentsDataSource(Apptimize.getVariants(),
-                Apptimize.getInstantUpdateOrWinnerInfo().values());
+                Apptimize.getInstantUpdateOrWinnerInfo().values(), winners);
         adapter = new CustomAdapter(this, dataSource, displayMode);
         listView.setAdapter(adapter);
-        adapter.setTestInfo(Apptimize.getTestInfo());
+        adapter.setTestInfo(Apptimize.getTestInfo(), Apptimize.getInstantUpdateOrWinnerInfo());
     }
 
     private void resetSearch() {
@@ -241,7 +246,7 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
                     progressIndicator.setVisibility(View.INVISIBLE);
 
                     if (adapter != null) {
-                        adapter.setTestInfo(Apptimize.getTestInfo());
+                        adapter.setTestInfo(Apptimize.getTestInfo(), Apptimize.getInstantUpdateOrWinnerInfo());
                         adapter.notifyDataSetChanged();
                     }
                 }

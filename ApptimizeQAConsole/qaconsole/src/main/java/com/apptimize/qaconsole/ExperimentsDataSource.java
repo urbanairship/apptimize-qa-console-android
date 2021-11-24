@@ -14,23 +14,50 @@ public class ExperimentsDataSource {
     private List<Experiment> winners = new ArrayList<>();
 
     ExperimentsDataSource(Map<Long, Map<String, Object>> variants,
-                          Collection<ApptimizeInstantUpdateOrWinnerInfo> winners) {
+                          Collection<ApptimizeInstantUpdateOrWinnerInfo> winners,
+                          List<Long> knownWinnerExperiments) {
+
+        for (ApptimizeInstantUpdateOrWinnerInfo winner : winners) {
+            if (winner.getType() == ApptimizeInstantUpdateOrWinnerInfo.Type.INSTANT_UPDATE) {
+                // we cannot force an instant update
+                continue;
+            }
+
+            Experiment experiment = new Experiment(winner.getWinningTestName(),
+                    winner.getWinningTestId());
+            Variant variant = new Variant(winner.getWinningVariantName(),
+                    winner.getWinningVariantId());
+            variant.setChecked(true);
+            experiment.addVariant(variant);
+            this.winners.add(experiment);
+        }
 
         List<Experiment> experiments = new ArrayList<>();
 
         for (Map<String, Object> source : variants.values()){
             Experiment experiment = new Experiment(source);
-            int index = experiments.indexOf(experiment);
-            if (index < 0) {
-                experiments.add(experiment);
+
+            // we can uncheck a winner. in this case it will not come in winners
+            // but it will come as a variant
+            if (knownWinnerExperiments.contains(experiment.id)) {
+                if (this.winners.contains(experiment)) {
+                    continue;
+                }
+                this.winners.add(experiment);
             } else {
-                experiment = experiments.get(index);
+                int index = experiments.indexOf(experiment);
+                if (index < 0) {
+                    experiments.add(experiment);
+                } else {
+                    experiment = experiments.get(index);
+                }
             }
 
             experiment.addVariant(new Variant(source));
         }
 
         Collections.sort(experiments);
+        Collections.sort(this.winners);
 
         for (Experiment exp : experiments) {
             // feature flag is the only type of experiment that has only one variant
@@ -39,23 +66,6 @@ public class ExperimentsDataSource {
             } else {
                 runningExperiments.add(exp);
             }
-        }
-
-        for (ApptimizeInstantUpdateOrWinnerInfo winner : winners) {
-            if (winner.getType() == ApptimizeInstantUpdateOrWinnerInfo.Type.INSTANT_UPDATE) {
-                // we cannot force an instant update
-                continue;
-            }
-
-            // we don't have the experiments ID but we have a variant ID.
-            // let's use it for identification
-            Experiment experiment = new Experiment(winner.getWinningTestName(),
-                    winner.getWinningVariantId());
-            Variant variant = new Variant(winner.getWinningVariantName(),
-                    winner.getWinningVariantId());
-            variant.setChecked(true);
-            experiment.addVariant(variant);
-            this.winners.add(experiment);
         }
     }
 

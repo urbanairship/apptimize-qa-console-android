@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.apptimize.ApptimizeInstantUpdateOrWinnerInfo;
 import com.apptimize.ApptimizeTestInfo;
 
 import java.util.ArrayList;
@@ -75,15 +76,22 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
         return dataSetFiltered.get(position);
     }
 
-    public void setTestInfo(Map<String, ApptimizeTestInfo> testInfo) {
+    public void setTestInfo(Map<String, ApptimizeTestInfo> testInfo,
+                            Map<String, ApptimizeInstantUpdateOrWinnerInfo> winners) {
         List<Experiment> experiments = dataSource.getAllExperiments();
         for (Experiment ex : experiments) {
             ApptimizeTestInfo info = testInfo.get(ex.name);
-            if (info == null) {
-                ex.selectVariant((long) -1);
-                continue;
+            long variantId = -1;
+            if (info != null) {
+                variantId = info.getEnrolledVariantId();
+            } else {
+                ApptimizeInstantUpdateOrWinnerInfo winnerInfo = winners.get(ex.name);
+                if (winnerInfo != null && winnerInfo.getWinningVariantId() != null) {
+                    variantId = winnerInfo.getWinningVariantId();
+                }
             }
-            ex.selectVariant(info.getEnrolledVariantId());
+
+            ex.selectVariant(variantId);
         }
     }
 

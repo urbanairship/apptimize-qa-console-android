@@ -9,19 +9,26 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 import com.apptimize.Apptimize;
-import com.apptimize.ApptimizeTestInfo;
+import com.apptimize.ApptimizeInstantUpdateOrWinnerInfo;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class QAConsole implements SensorEventListener {
     public boolean isShakeGestureEnabled;
-    private Context appContext;
+    private final Context appContext;
 
     private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
     private static final int SHAKE_SLOP_TIME_MS = 500;
     private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
 
     private long mShakeTimestamp;
-    private int mShakeCount;
     private SensorManager mSensorManager;
+    private Set<Long> knownWinnerExperiments = new HashSet<>();
     public static boolean qaActivityLaunched;
 
     public QAConsole(Context aContext) {
@@ -35,17 +42,39 @@ public class QAConsole implements SensorEventListener {
         isShakeGestureEnabled = true;
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        mSensorManager.unregisterListener(this);
+        super.finalize();
+    }
+
     public void launchQAConsole() {
         if (!isShakeGestureEnabled && !qaActivityLaunched) {
             launchApptimizeQAActivity();
         }
     }
 
+    public String getVersion() {
+        return Version.VERSION;
+    }
+
     private void launchApptimizeQAActivity() {
+        saveWinnerExperiments();
         Intent intent = new Intent(appContext, ApptimizeQaActivity.class);
+        intent.putExtra(ApptimizeQaActivity.BUNDLE_KEY_KNOWN_WINNERES, new ArrayList<>(knownWinnerExperiments));
         appContext.startActivity(intent);
         qaActivityLaunched = true;
         Apptimize.track("QA Console Opened");
+    }
+
+    private void saveWinnerExperiments() {
+        Collection<ApptimizeInstantUpdateOrWinnerInfo> values = Apptimize.getInstantUpdateOrWinnerInfo().values();
+        for (ApptimizeInstantUpdateOrWinnerInfo info : values) {
+            Long experimentId = info.getWinningTestId();
+            if (experimentId != null) {
+                knownWinnerExperiments.add(experimentId);
+            }
+        }
     }
 
     private void onShake() {
@@ -80,13 +109,7 @@ public class QAConsole implements SensorEventListener {
                     return;
                 }
 
-                // reset the shake count after 3 seconds of no shakes
-                if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
-                    mShakeCount = 0;
-                }
-
                 mShakeTimestamp = now;
-                mShakeCount++;
 
                onShake();
         }
