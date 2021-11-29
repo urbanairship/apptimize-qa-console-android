@@ -1,5 +1,7 @@
 # Apptimize QA Console for Android
 
+![https://github.com/urbanairship/apptimize-qa-console-android/releases/latest](https://img.shields.io/github/v/release/urbanairship/apptimize-qa-console-android) ![#license](https://img.shields.io/badge/license-Apache%202.0-orange)
+
 For more information see the [QA Console FAQ page](https://faq.apptimize.com/hc/en-us/articles/360021675293-How-do-I-use-the-Apptimize-QA-Console-).
 
 ## Introduction
@@ -50,6 +52,16 @@ The Apptimize QA console is a framework that can be integrated into your mobile 
 	console.launchQAConsoleActivity();
   ```
 
-## Deploying the AAR
+## Notes
 
-TODO
+* In order to display *Instant Updates* while using the QA console to force specific variants, you will need to set  `ApptimizeOptions` value `setForceVariantsShowWinnersAndInstantUpdates(true)` **Boolean** value to `true` and pass the options when calling `Apptimize.setup`. For example:
+
+  ```java
+  final String appKey = "YourAppKey";
+  final ApptimizeOptions options = new ApptimizeOptions();
+  options.setForceVariantsShowWinnersAndInstantUpdates(false);
+  // ... set any additional options here
+  Apptimize.setup(self, appKey, options);
+  ```
+
+  
