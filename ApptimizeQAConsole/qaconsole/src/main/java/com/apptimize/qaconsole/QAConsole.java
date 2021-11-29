@@ -61,6 +61,7 @@ public class QAConsole implements SensorEventListener {
     }
 
     @Override
+    // Source: https://stackoverflow.com/a/13830239
     public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
             float y = event.values[1];
