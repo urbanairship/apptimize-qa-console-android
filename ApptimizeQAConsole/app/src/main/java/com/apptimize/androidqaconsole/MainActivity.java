@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
     }
 
     private void refresh() {
-        Stream<ListContent> contentStream = Apptimize.getTestInfo()
+        Stream<ListContent> testStream = Apptimize.getTestInfo()
                 .values()
                 .stream()
                 .map(test -> new ListContent(
@@ -107,10 +107,7 @@ public class MainActivity extends Activity {
                         String.format("%s (%d)", test.getEnrolledVariantName(), test.getEnrolledVariantId())))
                 .sorted(Comparator.comparing(item -> item.title.toLowerCase()));
 
-        this.enrollmentList.clear();
-        this.enrollmentList.addAll(0, contentStream.collect(Collectors.toList()));
-
-        contentStream = Apptimize.getInstantUpdateOrWinnerInfo()
+        Stream<ListContent> winnerStream = Apptimize.getInstantUpdateOrWinnerInfo()
                 .values()
                 .stream()
                 .map(test -> {
@@ -128,8 +125,10 @@ public class MainActivity extends Activity {
                 })
                 .sorted(Comparator.comparing(item -> item.title.toLowerCase()));
 
-        this.enrollmentList.addAll(0, contentStream.collect(Collectors.toList()));
+        Stream<ListContent> combined = Stream.concat(testStream, winnerStream);
 
+        this.enrollmentList.clear();
+        this.enrollmentList.addAll(0, combined.collect(Collectors.toList()));
         this.enrollmentListAdapter.notifyDataSetChanged();
     }
 }
