@@ -4,6 +4,8 @@
 
 For more information see the [QA Console FAQ page](https://faq.apptimize.com/hc/en-us/articles/360021675293-How-do-I-use-the-Apptimize-QA-Console-).
 
+
+
 ## Introduction
 
 The Apptimize QA console is a framework that can be integrated into your mobile app. It enables you to preview variants in different combinations from all of your active feature flags and experiments on a simulator or device. This approach of QA works well for customers with large teams that would like to test hands-on while using the app. Integrating the QA console is a simple one-time process. Once the console is in place, it works by overriding your allocations and forcing your selected variants internally.
@@ -11,6 +13,8 @@ The Apptimize QA console is a framework that can be integrated into your mobile 
 > #### Note
 >
 > The QA console is only intended to be integrated into debug/developer-build versions of your app and should not be included in releases to your end-users.
+
+
 
 ## Integration
 
@@ -52,6 +56,8 @@ The Apptimize QA console is a framework that can be integrated into your mobile 
 	console.launchQAConsoleActivity();
   ```
 
+
+
 ## Notes
 
 * In order to display *Instant Updates* while using the QA console to force specific variants, you will need to set  `ApptimizeOptions` value `setForceVariantsShowWinnersAndInstantUpdates(true)` **Boolean** value to `true` and pass the options when calling `Apptimize.setup`. For example:
@@ -64,4 +70,17 @@ The Apptimize QA console is a framework that can be integrated into your mobile 
   Apptimize.setup(self, appKey, options);
   ```
 
-  
+
+
+
+## Building AAR
+
+1. Open ApptimizeQAConsole in terminal.
+
+2. Run the following command to generate the aar file.
+
+   ```bash
+    ./gradlew :qaconsole:assembleRelease
+   ```
+
+   
