@@ -14,9 +14,17 @@ public class Variant {
         this.checked = false;
     }
 
+    public Variant(String name, Long id) {
+        this.name = name;
+        this.id = id;
+        this.checked = false;
+    }
+
     public boolean isChecked() {
         return checked;
     }
+
+    public void toggle() { this.checked = !this.checked; }
 
     public void setChecked(boolean checked) {
         this.checked = checked;

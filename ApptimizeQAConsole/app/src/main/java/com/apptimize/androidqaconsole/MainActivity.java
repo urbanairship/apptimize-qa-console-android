@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.apptimize.Apptimize;
+import com.apptimize.ApptimizeInstantUpdateOrWinnerInfo;
+import com.apptimize.ApptimizeOptions;
 import com.apptimize.qaconsole.QAConsole;
 
 import java.util.AbstractList;
@@ -77,7 +79,11 @@ public class MainActivity extends Activity {
         });
 
         // Set your AppKey here
-        Apptimize.setup(this, "YourApptimizeApplicationKey");
+        final String appKey = "YourApptimizeApplicationKey";
+        final ApptimizeOptions options = new ApptimizeOptions();
+        options.setForceVariantsShowWinnersAndInstantUpdates(true);
+
+        Apptimize.setup(this, appKey, options);
         qaConsole = new QAConsole(this);
 
         refresh();
@@ -93,7 +99,7 @@ public class MainActivity extends Activity {
     }
 
     private void refresh() {
-        Stream<ListContent> contentStream = Apptimize.getTestInfo()
+        Stream<ListContent> testStream = Apptimize.getTestInfo()
                 .values()
                 .stream()
                 .map(test -> new ListContent(
@@ -101,8 +107,28 @@ public class MainActivity extends Activity {
                         String.format("%s (%d)", test.getEnrolledVariantName(), test.getEnrolledVariantId())))
                 .sorted(Comparator.comparing(item -> item.title.toLowerCase()));
 
+        Stream<ListContent> winnerStream = Apptimize.getInstantUpdateOrWinnerInfo()
+                .values()
+                .stream()
+                .map(test -> {
+                            if (test.getType() == ApptimizeInstantUpdateOrWinnerInfo.Type.INSTANT_UPDATE) {
+                                return new ListContent(
+                                        test.getInstantUpdateName(),
+                                        String.format("Instant Update: %d", test.getInstantUpdateId()));
+
+                            } else {
+                                return new ListContent(
+                                        test.getWinningTestName(),
+                                        String.format("Winner: %s (%d)", test.getWinningVariantName(), test.getWinningVariantId()));
+
+                            }
+                })
+                .sorted(Comparator.comparing(item -> item.title.toLowerCase()));
+
+        Stream<ListContent> combined = Stream.concat(testStream, winnerStream);
+
         this.enrollmentList.clear();
-        this.enrollmentList.addAll(0, contentStream.collect(Collectors.toList()));
+        this.enrollmentList.addAll(0, combined.collect(Collectors.toList()));
         this.enrollmentListAdapter.notifyDataSetChanged();
     }
 }

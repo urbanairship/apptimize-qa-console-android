@@ -19,9 +19,19 @@ public class Experiment implements Comparable<Experiment> {
         variants = new ArrayList<>();
     }
 
+    Experiment(String name, Long id) {
+        this.id = id;
+        this.name = name;
+        variants = new ArrayList<>();
+    }
+
     public void addVariant(Variant variant) {
         variants.add(variant);
         sortVariants();
+    }
+
+    public List<Variant> getVariants() {
+        return Collections.unmodifiableList(variants);
     }
 
     public List<ListViewModel> generateListViewItems(CharSequence filter) {
