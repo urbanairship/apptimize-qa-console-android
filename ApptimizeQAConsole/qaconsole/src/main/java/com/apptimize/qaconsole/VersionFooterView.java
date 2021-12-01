@@ -33,8 +33,7 @@ public class VersionFooterView extends LinearLayout {
         inflate(getContext(), R.layout.apptimize_versions_footer, this);
 
         TextView apptimizeVersion = findViewById(R.id.apptimize_version_text);
-        //TODO: Uncomment after apptimize deploy
-//        apptimizeVersion.setText(Apptimize.getVersion());
+        apptimizeVersion.setText(Apptimize.getVersion());
 
         TextView qaConsoleVersion = findViewById(R.id.qaconsole_version_text);
         qaConsoleVersion.setText(Version.VERSION);
