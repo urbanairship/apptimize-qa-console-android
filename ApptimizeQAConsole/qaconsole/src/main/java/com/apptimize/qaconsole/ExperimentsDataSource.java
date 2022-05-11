@@ -1,5 +1,7 @@
 package com.apptimize.qaconsole;
 
+import android.util.Log;
+
 import com.apptimize.ApptimizeInstantUpdateOrWinnerInfo;
 
 import java.util.ArrayList;
@@ -57,16 +59,28 @@ public class ExperimentsDataSource {
         }
 
         Collections.sort(experiments);
-        Collections.sort(this.winners);
 
         for (Experiment exp : experiments) {
-            // feature flag is the only type of experiment that has only one variant
+            // There are two types of experiments that has 1 variant:
+            // 1. FeatureFlag: the variant name must be On State
+            // 2. A winner that doesn't go because of pilot group \ user mismatch
+            
+            // Caveat: if user has created an A\B experiment with On State variant name and made this
+            // variant as a winner and assign it to a particular pilog group \ user the other users
+            // will see this experiment as a FeatureFlag instead of a winner.
             if (exp.getVariants().size() == 1) {
-                featureFlags.add(exp);
-            } else {
+                if (exp.isFeatureFlag()) {
+                    featureFlags.add(exp);
+                } else {
+                    this.winners.add(exp);
+                }
+            }
+            else {
                 runningExperiments.add(exp);
             }
         }
+
+        Collections.sort(this.winners);
     }
 
     public List<Experiment> getRunningExperiments() {
