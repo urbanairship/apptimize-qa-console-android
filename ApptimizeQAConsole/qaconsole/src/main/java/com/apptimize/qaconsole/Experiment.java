@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Experiment implements Comparable<Experiment> {
+    private static final String FEATURE_FLAG_VARIANT_NAME = "On State";
+
     public final String name;
     public final Long id;
     private List<Variant> variants;
@@ -86,6 +88,11 @@ public class Experiment implements Comparable<Experiment> {
         }
 
         return result;
+    }
+
+    public boolean isFeatureFlag() {
+        return variants.size() == 1 &&
+                FEATURE_FLAG_VARIANT_NAME.equals(variants.get(0).name);
     }
 
     @Override
