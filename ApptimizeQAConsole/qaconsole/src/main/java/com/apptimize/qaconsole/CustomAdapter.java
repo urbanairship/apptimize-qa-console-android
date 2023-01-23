@@ -1,6 +1,7 @@
 package com.apptimize.qaconsole;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filterable;
 import android.widget.Filter;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -18,7 +18,6 @@ import com.apptimize.ApptimizeInstantUpdateOrWinnerInfo;
 import com.apptimize.ApptimizeTestInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
     private List<ListViewModel> dataSetFiltered;
     private CustomFilter customFilter;
     private DisplayMode displayMode;
+    private final Resources resources;
 
     // View lookup cache
     private static class ViewHolder {
@@ -58,6 +58,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
         super(context, R.layout.apptimize_row_item, new ArrayList<ListViewModel>());
         this.dataSource = dataSource;
         this.displayMode = displayMode;
+        this.resources = context.getResources();
         reset();
     }
 
@@ -185,7 +186,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
         ListViewModel viewModel = getItem(position);
         if (viewModel.isHeader) {
             viewHolder.txtName.setText(viewModel.name);
-            viewHolder.txtName.setTextColor(Color.parseColor("#007AFF"));
+            viewHolder.txtName.setTextColor(resources.getColor(R.color.apptimize_experiment_name_color));
             viewHolder.txtName.setTextSize(18);
             viewHolder.txtName.setTypeface(null, Typeface.BOLD);
             viewHolder.checkBox.setVisibility(View.GONE);
@@ -193,7 +194,7 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
         } else {
             viewModel.setChecked(getVariantFor(position).isChecked());
             viewHolder.txtName.setText(viewModel.name);
-            viewHolder.txtName.setTextColor(Color.parseColor("#000000"));
+            viewHolder.txtName.setTextColor(resources.getColor(R.color.apptimize_variant_name_color));
             viewHolder.txtName.setTextSize(17);
             viewHolder.txtName.setTypeface(null, Typeface.NORMAL);
             boolean showToggle = this.displayMode == DisplayMode.FEATURE_FLAGS;
