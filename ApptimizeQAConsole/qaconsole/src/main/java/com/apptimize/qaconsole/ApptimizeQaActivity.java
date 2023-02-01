@@ -133,7 +133,9 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ApptimizeQaActivity.this.adapter.setDisplayMode(DisplayMode.values()[position]);
                 resetSearch();
-                menuSearch.collapseActionView();
+                if (menuSearch != null) {
+                    menuSearch.collapseActionView();
+                }
             }
 
             @Override
