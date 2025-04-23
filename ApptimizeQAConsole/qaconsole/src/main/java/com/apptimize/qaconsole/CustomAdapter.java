@@ -131,6 +131,9 @@ public class CustomAdapter extends ArrayAdapter<ListViewModel> implements Filter
     public void selectVariantAtPosition(int position) {
         ListViewModel viewModel = getItem(position);
         Experiment experiment = getExperimentFor(position);
+        if (experiment == null) {
+            return;
+        }
         if (displayMode == DisplayMode.EXPERIMENTS) {
             experiment.selectVariant(viewModel.id);
         } else {

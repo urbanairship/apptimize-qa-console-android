@@ -154,9 +154,6 @@ public class ApptimizeQaActivity extends Activity implements SearchView.OnQueryT
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter.selectVariantAtPosition(position);
                 setSelectedVariants(adapter.getAllCheckedVariants());
-
-//                resetSearch();
-//                menuSearch.collapseActionView();
             }
         });
 
